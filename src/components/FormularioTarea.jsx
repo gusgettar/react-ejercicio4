@@ -1,10 +1,21 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ListaTareas from './ListaTareas';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 const FormularioTarea = () => {
-    const [listaTareas, setlistaTareas] = useState([])
+    const tareasLocalStorage = JSON.parse(localStorage.getItem('tareasKey') || [])
+    const [listaTareas, setlistaTareas] = useState(tareasLocalStorage)
     const [tarea, setTarea] = useState("")
+    //CICLO DE VIDA DEL COMPONENTE
+
+    useEffect(()=>{
+      console.log('prueba del ciclo de vida')
+      localStorage.setItem('tareasKey', JSON.stringify(listaTareas))
+     
+    }, [listaTareas])
+
+
 //const tomarText = (e)=>{
 //    setTarea(e.target.value)
 //}
@@ -30,7 +41,7 @@ setlistaTareas(tareasFiltradas)
         <section>
             <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3 d-flex">
-        <Form.Control value={tarea} onChange={(e)=>setTarea(e.target.value)} type="text" placeholder="Agrega una tarea" />
+        <Form.Control required value={tarea} onChange={(e)=>setTarea(e.target.value)} type="text" placeholder="Agrega una tarea" />
       <Button variant="primary" type="submit">
         Enviar
       </Button>
