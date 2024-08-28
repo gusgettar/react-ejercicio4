@@ -19,6 +19,13 @@ setlistaTareas([...listaTareas, tarea])
 setTarea("")
 
 }
+
+const borrarTarea = (nombreTarea)=>{
+//listaTareas.splice
+const tareasFiltradas = listaTareas.filter((item)=>item !== nombreTarea)
+//actualizar state
+setlistaTareas(tareasFiltradas)
+}
     return (
         <section>
             <Form onSubmit={handleSubmit}>
@@ -32,7 +39,7 @@ setTarea("")
 
       
     </Form>
-    <ListaTareas listaTareas={listaTareas}></ListaTareas>
+    <ListaTareas listaTareas={listaTareas} borrarTarea={borrarTarea}></ListaTareas>
         </section>
     );
 };
