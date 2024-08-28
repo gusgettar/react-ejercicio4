@@ -32,7 +32,7 @@ setTarea("")
 
       
     </Form>
-    <ListaTareas></ListaTareas>
+    <ListaTareas listaTareas={listaTareas}></ListaTareas>
         </section>
     );
 };
