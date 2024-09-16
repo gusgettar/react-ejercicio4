@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 const FormularioTarea = () => {
-    const tareasLocalStorage = JSON.parse(localStorage.getItem('tareasKey') || [])
+    const tareasLocalStorage = JSON.parse(localStorage.getItem('tareasKey')) || []
     const [listaTareas, setlistaTareas] = useState(tareasLocalStorage)
     const [tarea, setTarea] = useState("")
     const {register, handleSubmit, formState:{errors}} = useForm()    
