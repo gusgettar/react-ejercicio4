@@ -3,47 +3,61 @@ import Form from 'react-bootstrap/Form';
 import ListaTareas from './ListaTareas';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { borrarTareaAPI, buscarTareas, crearTareaAPI } from '../helpers/queries';
 
 const FormularioTarea = () => {
     const tareasLocalStorage = JSON.parse(localStorage.getItem('tareasKey')) || []
-    const [listaTareas, setlistaTareas] = useState(tareasLocalStorage)
+    const [listaTareas, setlistaTareas] = useState([])
     const [tarea, setTarea] = useState("")
-    const {register, handleSubmit, formState:{errors}} = useForm()    
+    const {register, handleSubmit, formState:{errors}, reset} = useForm()    
     //CICLO DE VIDA DEL COMPONENTE
 
+    const cargarTareas = async ()=>{
+      const respuesta = await buscarTareas()
+        if(respuesta.status===200){
+
+          const tareas = await respuesta.json()
+         
+          setlistaTareas(tareas)
+        }
+        
+    }
+
+    const nuevaTareaAPI = async(nuevaTarea)=>{
+      const respuesta = await crearTareaAPI(nuevaTarea)
+      if(respuesta.status===201){
+        console.log('Se creo la tarea')
+        cargarTareas()
+        reset()
+
+      }
+
+    }
+
+    const borrarTarea = async(id)=>{
+      const respuesta = await borrarTareaAPI(id)
+      if(respuesta.status===200){
+        console.log('se borro la tarea')
+        cargarTareas()
+      }
+    }
+
     useEffect(()=>{
-      console.log('prueba del ciclo de vida')
-      localStorage.setItem('tareasKey', JSON.stringify(listaTareas))
+      cargarTareas()
      
-    }, [listaTareas])
+    },[setlistaTareas])
+  
 
 
-//const tomarText = (e)=>{
-//    setTarea(e.target.value)
-//}
-
-const handleSubmit2 = (e)=>{
-e.preventDefault()
-//guardar la tarea en listaTareas
-//listaTareas.push(tarea) (NO SE PUEDE HACER UN PUSH EN UN STATE)
-//...
-setlistaTareas([...listaTareas, tarea])
-
-setTarea("")
-
-}
-
-const borrarTarea = (nombreTarea)=>{
-//listaTareas.splice
-const tareasFiltradas = listaTareas.filter((item)=>item !== nombreTarea)
-//actualizar state
-setlistaTareas(tareasFiltradas)
-}
     return (
         <section>
-            <Form onSubmit={handleSubmit2}>
+            <Form onSubmit={handleSubmit(nuevaTareaAPI)} >
       <Form.Group className="mb-3 d-flex">
-        <Form.Control required value={tarea} onChange={(e)=>setTarea(e.target.value)} type="text" placeholder="Agrega una tarea" />
+        <Form.Control {...register("nombreTarea",{
+          required: "el nombre de la tarea es obligatorio",
+          minLength: {value: 2, message: "Debe ingresar al menos 2 caracteres"},
+          maxLength: {value: 50, message: "Debe ingresar como maximo 50 caracteres"},
+        })} type="text" placeholder="Agrega una tarea" />
       <Button variant="primary" type="submit">
         Enviar
       </Button>
@@ -52,7 +66,7 @@ setlistaTareas(tareasFiltradas)
 
       
     </Form>
-    <ListaTareas listaTareas={listaTareas} borrarTarea={borrarTarea}></ListaTareas>
+    <ListaTareas listaTareas={listaTareas} borrarTarea={borrarTarea} ></ListaTareas>
         </section>
     );
   

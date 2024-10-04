@@ -5,7 +5,7 @@ const ListaTareas = ({listaTareas,borrarTarea}) => {
     return (
         <ListGroup>
           {
-            listaTareas.map((item, posicionTarea)=><ItemTarea key={posicionTarea} tarea={item} borrarTarea={borrarTarea}></ItemTarea>)
+            listaTareas.map((tarea)=><ItemTarea key={tarea._id} tarea={tarea} borrarTarea={borrarTarea}></ItemTarea>)
             
 
           }
