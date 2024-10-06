@@ -38,7 +38,7 @@ const FormularioTarea = () => {
 
     const borrarTarea = async(id)=>{
       Swal.fire({
-        title: "¿Esta seguro de borrar el producto?",
+        title: "¿Esta seguro de borrar la tarea?",
         text: "No puedes revertir esta operacion",
         icon: "warning",
         showCancelButton: true,
