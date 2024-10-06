@@ -11,8 +11,8 @@ const ItemTarea = ({ tarea, borrarTarea }) => {
     }, []);
 
     return (
-        <ListGroup.Item
-            className={`d-flex justify-content-between ${animate ? 'new-task' : ''}`}
+        <ListGroup.Item 
+            className={`d-flex justify-content-between ${animate ? 'new-task' : ''}` }
         >
             {tarea.nombreTarea}
             <Button onClick={() => borrarTarea(tarea._id)} variant="danger">
