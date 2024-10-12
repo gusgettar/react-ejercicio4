@@ -8,8 +8,11 @@
       transform: translateY(0);
     }
   }
+
+
   
   .new-task {
     animation: fadeIn 0.5s ease-in-out;
   }
+
 

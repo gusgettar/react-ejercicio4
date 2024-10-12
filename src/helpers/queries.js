@@ -14,6 +14,34 @@ export const buscarTareas = async()=>{
 
 }
 
+export const buscarTareabyId = async (id)=>{
+    try {
+        const respuesta = await fetch(URLtareas+'/'+id)
+        return respuesta
+    } catch (error) {
+        console.error(error)
+        return false
+    }
+}
+
+export const editarTareaAPI = async(tareaEditada, id)=>{
+    try {
+    const respuesta = await fetch(URLtareas+'/'+id,{
+        method: "PUT",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        
+        body: JSON.stringify(tareaEditada)
+    })
+    
+    return respuesta;
+   } catch (error) {
+    console.error(error)
+    return false;
+}
+}
+
 export const crearTareaAPI = async (nuevaTarea) =>{
     try {
         const respuesta = await fetch(URLtareas,{

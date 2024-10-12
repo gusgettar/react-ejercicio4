@@ -3,16 +3,18 @@ import Form from 'react-bootstrap/Form';
 import ListaTareas from './ListaTareas';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { borrarTareaAPI, buscarTareas, crearTareaAPI } from '../helpers/queries';
+import { borrarTareaAPI, buscarTareabyId, buscarTareas, crearTareaAPI, editarTareaAPI } from '../helpers/queries';
 import Swal from 'sweetalert2';
 
 
+
 const FormularioTarea = () => {
-    const tareasLocalStorage = JSON.parse(localStorage.getItem('tareasKey')) || []
+    const [creandoTarea, setCreandoTarea]=useState(true)
+    const [idEditar, setIdEditar]=useState()
     const [listaTareas, setlistaTareas] = useState([])
-    const [tarea, setTarea] = useState("")
-    const {register, handleSubmit, formState:{errors}, reset} = useForm()    
-    //CICLO DE VIDA DEL COMPONENTE
+ 
+    const {register,setValue ,handleSubmit,getValues ,formState:{errors}, reset} = useForm()    
+  
 
     const cargarTareas = async ()=>{
       const respuesta = await buscarTareas()
@@ -25,18 +27,46 @@ const FormularioTarea = () => {
         
     }
 
-    const nuevaTareaAPI = async(nuevaTarea)=>{
+      const nuevaTareaAPI = async(nuevaTarea)=>{
       const respuesta = await crearTareaAPI(nuevaTarea)
       if(respuesta.status===201){
         console.log('Se creo la tarea')
         cargarTareas()
         reset()
-
+      }else{
+        Swal.fire({
+          title: "No se pudo cargar la tarea",
+          text: `${nuevaTarea.nombreTarea}`,
+          icon: "error",
+                    
+        })
       }
 
     }
+    const editarTarea = async(id)=>{
+      try {
+        setCreandoTarea(false)
+        const respuesta = await buscarTareabyId(id)
+        const data = await respuesta.json()
+        console.log(data.nombreTarea)
+        setValue('nombreTarea', data.nombreTarea)
+        setIdEditar(id)
+        
+        
+      } catch (error) {
+        
+      }
+    }
 
-    const borrarTarea = async(id)=>{
+    const guardarTareaEditada = async(tarea)=>{
+
+     
+      await editarTareaAPI(tarea,idEditar)
+      cargarTareas()
+      reset()
+    }
+
+   const borrarTarea = async(id)=>{
       Swal.fire({
         title: "¿Esta seguro de borrar la tarea?",
         text: "No puedes revertir esta operacion",
@@ -49,18 +79,22 @@ const FormularioTarea = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const respuesta = await borrarTareaAPI(id)
+       
           if(respuesta.status === 200){
             const tareaEncontrada = await respuesta.json()
             console.log(tareaEncontrada)
             Swal.fire({
               title: "Tarea Eliminada",
               text: `${tareaEncontrada.mensaje}`,
-              icon: "success"
+              icon: "success",
+              
             })
+            
           }
       
         }
         cargarTareas()
+       
     }
   )}
 
@@ -73,7 +107,7 @@ const FormularioTarea = () => {
 
     return (
         <section>
-            <Form onSubmit={handleSubmit(nuevaTareaAPI)} >
+            <Form onSubmit={creandoTarea ? handleSubmit(nuevaTareaAPI):handleSubmit(guardarTareaEditada)} >
       <Form.Group className="mb-3 d-flex">
         <Form.Control {...register("nombreTarea",{
           required: "el nombre de la tarea es obligatorio",
@@ -88,7 +122,7 @@ const FormularioTarea = () => {
 
       
     </Form>
-    <ListaTareas listaTareas={listaTareas} borrarTarea={borrarTarea} ></ListaTareas>
+    <ListaTareas listaTareas={listaTareas} editarTarea={editarTarea} borrarTarea={borrarTarea}></ListaTareas>
         </section>
     );
   
